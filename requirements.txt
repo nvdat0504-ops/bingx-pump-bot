@@ -1,0 +1,7 @@
+# BingX Pump Dump Bot - Dependencies
+python-telegram-bot==21.5
+requests==2.31.0
+mplfinance==0.12.10b0
+pandas==2.1.4
+numpy==1.26.2
+matplotlib==3.8.2
