@@ -1,0 +1,43 @@
+name: BingX Pump Dump Bot
+
+on:
+  schedule:
+    # Chạy mỗi 5 phút (GitHub Actions tối thiểu là 5 phút)
+    - cron: '*/5 * * * *'
+  workflow_dispatch:   # Cho phép chạy thủ công bằng nút trên GitHub
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Tải code về
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Tải file cooldown từ lần chạy trước (để không spam lại)
+      - name: Restore cooldown cache
+        uses: actions/cache@v4
+        with:
+          path: cooldown.json
+          key: cooldown-${{ github.run_id }}
+          restore-keys: |
+            cooldown-
+
+      # 3. Cài Python
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      # 4. Cài thư viện
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # 5. Chạy bot (token lấy từ Secrets)
+      - name: Run bot
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+        run: python bot.py
